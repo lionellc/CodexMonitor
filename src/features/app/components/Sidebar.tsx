@@ -129,6 +129,7 @@ export function Sidebar({
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [addMenuAnchor, setAddMenuAnchor] = useState<{
     workspaceId: string;
     top: number;
@@ -343,6 +344,12 @@ export function Sidebar({
   }, [addMenuAnchor]);
 
   useEffect(() => {
+    if (!isSearchOpen && searchQuery) {
+      setSearchQuery("");
+    }
+  }, [isSearchOpen, searchQuery]);
+
+  useEffect(() => {
     const handle = window.setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 150);
@@ -351,24 +358,32 @@ export function Sidebar({
 
   return (
     <aside
-      className="sidebar"
+      className={`sidebar${isSearchOpen ? " search-open" : ""}`}
       ref={workspaceDropTargetRef}
       onDragOver={onWorkspaceDragOver}
       onDragEnter={onWorkspaceDragEnter}
       onDragLeave={onWorkspaceDragLeave}
       onDrop={onWorkspaceDrop}
     >
-      <SidebarHeader onSelectHome={onSelectHome} onAddWorkspace={onAddWorkspace} />
-      <div className="sidebar-search">
-        <input
-          className="sidebar-search-input"
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search projects"
-          aria-label="Search projects"
-          data-tauri-drag-region="false"
-        />
-        {searchQuery.length > 0 && (
+      <SidebarHeader
+        onSelectHome={onSelectHome}
+        onAddWorkspace={onAddWorkspace}
+        onToggleSearch={() => setIsSearchOpen((prev) => !prev)}
+        isSearchOpen={isSearchOpen}
+      />
+      <div className={`sidebar-search${isSearchOpen ? " is-open" : ""}`}>
+        {isSearchOpen && (
+          <input
+            className="sidebar-search-input"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search projects"
+            aria-label="Search projects"
+            data-tauri-drag-region="false"
+            autoFocus
+          />
+        )}
+        {isSearchOpen && searchQuery.length > 0 && (
           <button
             type="button"
             className="sidebar-search-clear"
