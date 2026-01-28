@@ -1,4 +1,4 @@
-import FolderKanban from "lucide-react/dist/esm/icons/folder-kanban";
+import FolderPlus from "lucide-react/dist/esm/icons/folder-plus";
 import Search from "lucide-react/dist/esm/icons/search";
 
 type SidebarHeaderProps = {
@@ -16,16 +16,26 @@ export function SidebarHeader({
 }: SidebarHeaderProps) {
   return (
     <div className="sidebar-header">
-      <div>
-        <button
-          className="subtitle subtitle-button"
-          onClick={onSelectHome}
-          data-tauri-drag-region="false"
-          aria-label="Open home"
-        >
-          <FolderKanban className="sidebar-nav-icon" />
-          Projects
-        </button>
+      <div className="sidebar-header-title">
+        <div className="sidebar-title-group">
+          <button
+            className="subtitle subtitle-button sidebar-title-button"
+            onClick={onSelectHome}
+            data-tauri-drag-region="false"
+            aria-label="Open home"
+          >
+            Projects
+          </button>
+          <button
+            className="sidebar-title-add"
+            onClick={onAddWorkspace}
+            data-tauri-drag-region="false"
+            aria-label="Add workspace"
+            type="button"
+          >
+            <FolderPlus aria-hidden />
+          </button>
+        </div>
       </div>
       <div className="sidebar-header-actions">
         <button
@@ -37,14 +47,6 @@ export function SidebarHeader({
           type="button"
         >
           <Search aria-hidden />
-        </button>
-        <button
-          className="ghost workspace-add"
-          onClick={onAddWorkspace}
-          data-tauri-drag-region="false"
-          aria-label="Add workspace"
-        >
-          +
         </button>
       </div>
     </div>

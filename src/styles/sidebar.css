@@ -86,18 +86,67 @@
 
 .sidebar-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 0 4px;
+  padding: 0;
   margin-bottom: 0;
   -webkit-app-region: no-drag;
+}
+
+.sidebar-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sidebar-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sidebar-title-button {
+  min-width: 0;
+}
+
+.sidebar-title-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  line-height: 1;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  transition: color 0.15s ease;
+}
+
+.sidebar-title-add svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-title-add:hover,
+.sidebar-title-add:focus-visible {
+  color: var(--text-strong);
+  background: var(--surface-hover);
+  box-shadow: none;
+  transform: none;
+  border-radius: 8px;
 }
 
 .sidebar-header-actions {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-left: auto;
 }
 
 .sidebar-search-toggle {
@@ -105,6 +154,7 @@
   height: 28px;
   padding: 0;
   border-radius: 8px;
+  border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -120,6 +170,8 @@
 .sidebar-search-toggle:focus-visible {
   color: var(--text-strong);
   background: var(--surface-hover);
+  transform: none;
+  box-shadow: none;
 }
 
 .sidebar-search-toggle.is-active {
@@ -221,6 +273,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.sidebar-header .subtitle {
+  margin-top: 0;
+  line-height: 1.1;
 }
 
 .subtitle-button {
@@ -523,7 +580,6 @@
   background: var(--surface-card-strong);
 }
 
-.sidebar-header:hover .workspace-add,
 .workspace-row:hover .workspace-add,
 .worktree-row:hover .workspace-add {
   opacity: 1;
