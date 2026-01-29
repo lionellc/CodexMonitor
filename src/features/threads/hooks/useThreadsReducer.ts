@@ -184,6 +184,16 @@ export type ThreadAction =
       itemId: string;
       delta: string;
     }
+  | {
+      type: "appendReasoningSummaryBoundary";
+      threadId: string;
+      itemId: string;
+    }
+  | {
+      type: "appendContextCompacted";
+      threadId: string;
+      turnId: string;
+    }
   | { type: "appendReasoningContent"; threadId: string; itemId: string; delta: string }
   | { type: "appendToolOutput"; threadId: string; itemId: string; delta: string }
   | { type: "setThreads"; workspaceId: string; threads: ThreadSummary[] }
@@ -269,6 +279,19 @@ function mergeStreamingText(existing: string, delta: string) {
     }
   }
   return `${existing}${delta}`;
+}
+
+function addSummaryBoundary(existing: string) {
+  if (!existing) {
+    return existing;
+  }
+  if (existing.endsWith("\n\n")) {
+    return existing;
+  }
+  if (existing.endsWith("\n")) {
+    return `${existing}\n`;
+  }
+  return `${existing}\n\n`;
 }
 
 function dropLatestLocalReviewStart(list: ConversationItem[]) {
@@ -759,6 +782,54 @@ export function threadReducer(state: ThreadState, action: ThreadAction): ThreadS
         itemsByThread: {
           ...state.itemsByThread,
           [action.threadId]: prepareThreadItems(next),
+        },
+      };
+    }
+    case "appendReasoningSummaryBoundary": {
+      const list = state.itemsByThread[action.threadId] ?? [];
+      const index = list.findIndex((entry) => entry.id === action.itemId);
+      const base =
+        index >= 0 && list[index].kind === "reasoning"
+          ? (list[index] as ConversationItem)
+          : {
+              id: action.itemId,
+              kind: "reasoning",
+              summary: "",
+              content: "",
+            };
+      const updated: ConversationItem = {
+        ...base,
+        summary: addSummaryBoundary("summary" in base ? base.summary : ""),
+      } as ConversationItem;
+      const next = index >= 0 ? [...list] : [...list, updated];
+      if (index >= 0) {
+        next[index] = updated;
+      }
+      return {
+        ...state,
+        itemsByThread: {
+          ...state.itemsByThread,
+          [action.threadId]: prepareThreadItems(next),
+        },
+      };
+    }
+    case "appendContextCompacted": {
+      const list = state.itemsByThread[action.threadId] ?? [];
+      const id = `context-compacted-${action.turnId}`;
+      if (list.some((entry) => entry.id === id)) {
+        return state;
+      }
+      const compactedMessage: ConversationItem = {
+        id,
+        kind: "message",
+        role: "assistant",
+        text: "Context compacted.",
+      };
+      return {
+        ...state,
+        itemsByThread: {
+          ...state.itemsByThread,
+          [action.threadId]: prepareThreadItems([...list, compactedMessage]),
         },
       };
     }
