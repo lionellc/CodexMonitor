@@ -442,13 +442,14 @@ describe("threadItems", () => {
       content: [
         { type: "text", text: "Please" },
         { type: "skill", name: "Review" },
-        { type: "image" },
+        { type: "image", url: "https://example.com/image.png" },
       ],
     });
     expect(item).not.toBeNull();
     if (item && item.kind === "message") {
       expect(item.role).toBe("user");
       expect(item.text).toBe("Please $Review [image]");
+      expect(item.images).toEqual(["https://example.com/image.png"]);
     }
   });
 

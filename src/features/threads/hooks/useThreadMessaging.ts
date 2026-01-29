@@ -134,6 +134,7 @@ export function useThreadMessaging({
               kind: "message",
               role: "user",
               text: optimisticText,
+              images: images.length > 0 ? images : undefined,
             },
             hasCustomName: Boolean(getCustomName(workspace.id, threadId)),
           });
