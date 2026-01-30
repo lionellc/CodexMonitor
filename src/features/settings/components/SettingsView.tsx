@@ -2757,6 +2757,33 @@ export function SettingsView({
                   </div>
                 )}
 
+                <div className="settings-toggle-row">
+                  <div>
+                    <div className="settings-toggle-title">
+                      Show global AGENTS.md in workspaces
+                    </div>
+                    <div className="settings-toggle-subtitle">
+                      Display the global instructions card on each workspace home view.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={`settings-toggle ${
+                      appSettings.showGlobalAgentsInWorkspace ? "on" : ""
+                    }`}
+                    onClick={() =>
+                      void onUpdateAppSettings({
+                        ...appSettings,
+                        showGlobalAgentsInWorkspace:
+                          !appSettings.showGlobalAgentsInWorkspace,
+                      })
+                    }
+                    aria-pressed={appSettings.showGlobalAgentsInWorkspace}
+                  >
+                    <span className="settings-toggle-knob" />
+                  </button>
+                </div>
+
                 <FileEditorCard
                   title="Global AGENTS.md"
                   meta={globalAgentsMeta}

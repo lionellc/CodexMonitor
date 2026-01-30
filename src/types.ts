@@ -146,6 +146,7 @@ export type AppSettings = {
   codeFontFamily: string;
   codeFontSize: number;
   notificationSoundsEnabled: boolean;
+  showGlobalAgentsInWorkspace: boolean;
   experimentalCollabEnabled: boolean;
   experimentalCollaborationModesEnabled: boolean;
   experimentalSteerEnabled: boolean;

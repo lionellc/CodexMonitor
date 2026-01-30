@@ -407,6 +407,11 @@ pub(crate) struct AppSettings {
     )]
     pub(crate) notification_sounds_enabled: bool,
     #[serde(
+        default = "default_show_global_agents_in_workspace",
+        rename = "showGlobalAgentsInWorkspace"
+    )]
+    pub(crate) show_global_agents_in_workspace: bool,
+    #[serde(
         default = "default_experimental_collab_enabled",
         rename = "experimentalCollabEnabled"
     )]
@@ -592,6 +597,10 @@ fn default_notification_sounds_enabled() -> bool {
     true
 }
 
+fn default_show_global_agents_in_workspace() -> bool {
+    true
+}
+
 fn default_experimental_collab_enabled() -> bool {
     false
 }
@@ -752,6 +761,7 @@ impl Default for AppSettings {
             code_font_family: default_code_font_family(),
             code_font_size: default_code_font_size(),
             notification_sounds_enabled: true,
+            show_global_agents_in_workspace: true,
             experimental_collab_enabled: false,
             experimental_collaboration_modes_enabled: false,
             experimental_steer_enabled: false,
@@ -849,6 +859,7 @@ mod tests {
         assert!(settings.code_font_family.contains("SF Mono"));
         assert_eq!(settings.code_font_size, 11);
         assert!(settings.notification_sounds_enabled);
+        assert!(settings.show_global_agents_in_workspace);
         assert!(!settings.experimental_steer_enabled);
         assert!(!settings.dictation_enabled);
         assert_eq!(settings.dictation_model_id, "base");

@@ -24,6 +24,8 @@ type FileEditorCardProps = {
   disabled?: boolean;
   refreshDisabled?: boolean;
   saveDisabled?: boolean;
+  readOnly?: boolean;
+  showSave?: boolean;
   saveLabel: string;
   onChange: (value: string) => void;
   onRefresh: () => void;
@@ -41,6 +43,8 @@ export function FileEditorCard({
   disabled,
   refreshDisabled,
   saveDisabled,
+  readOnly = false,
+  showSave = true,
   saveLabel,
   onChange,
   onRefresh,
@@ -63,29 +67,36 @@ export function FileEditorCard({
           >
             <RefreshCw aria-hidden />
           </button>
-          <button
-            type="button"
-            className={classNames.iconButton}
-            onClick={onSave}
-            disabled={saveDisabled}
-            aria-label={saveLabel === "Create" ? `Create ${title}` : `Save ${title}`}
-            title={saveLabel}
-          >
-            <Save aria-hidden />
-          </button>
+          {showSave ? (
+            <button
+              type="button"
+              className={classNames.iconButton}
+              onClick={onSave}
+              disabled={saveDisabled}
+              aria-label={saveLabel === "Create" ? `Create ${title}` : `Save ${title}`}
+              title={saveLabel}
+            >
+              <Save aria-hidden />
+            </button>
+          ) : null}
         </div>
       </div>
       {error ? <div className={classNames.error}>{error}</div> : null}
       <textarea
         className={classNames.textarea}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => {
+          if (readOnly) {
+            return;
+          }
+          onChange(event.target.value);
+        }}
         placeholder={placeholder}
         spellCheck={false}
         disabled={disabled}
+        readOnly={readOnly}
       />
       {helpText ? <div className={classNames.help}>{helpText}</div> : null}
     </div>
   );
 }
-

@@ -86,6 +86,13 @@ type WorkspaceHomeProps = {
   onAgentMdChange: (value: string) => void;
   onAgentMdRefresh: () => void;
   onAgentMdSave: () => void;
+  showGlobalAgentsInWorkspace: boolean;
+  globalAgentsContent: string;
+  globalAgentsExists: boolean;
+  globalAgentsTruncated: boolean;
+  globalAgentsLoading: boolean;
+  globalAgentsError: string | null;
+  onGlobalAgentsRefresh: () => void;
 };
 
 const INSTANCE_OPTIONS = [1, 2, 3, 4];
@@ -154,6 +161,13 @@ export function WorkspaceHome({
   onAgentMdChange,
   onAgentMdRefresh,
   onAgentMdSave,
+  showGlobalAgentsInWorkspace,
+  globalAgentsContent,
+  globalAgentsExists,
+  globalAgentsTruncated,
+  globalAgentsLoading,
+  globalAgentsError,
+  onGlobalAgentsRefresh,
 }: WorkspaceHomeProps) {
   const [showIcon, setShowIcon] = useState(true);
   const [runModeOpen, setRunModeOpen] = useState(false);
@@ -390,6 +404,20 @@ export function WorkspaceHome({
   const agentMdSaveLabel = agentMdExists ? "Save" : "Create";
   const agentMdSaveDisabled = agentMdLoading || agentMdSaving || !agentMdDirty;
   const agentMdRefreshDisabled = agentMdLoading || agentMdSaving;
+  const globalAgentsStatus = globalAgentsLoading
+    ? "Loading…"
+    : globalAgentsExists
+      ? ""
+      : "Not found";
+  const globalAgentsMetaParts: string[] = [];
+  if (globalAgentsStatus) {
+    globalAgentsMetaParts.push(globalAgentsStatus);
+  }
+  if (globalAgentsTruncated) {
+    globalAgentsMetaParts.push("Truncated");
+  }
+  const globalAgentsMeta = globalAgentsMetaParts.join(" · ");
+  const globalAgentsRefreshDisabled = globalAgentsLoading;
 
   const renderInstanceList = (instances: WorkspaceHomeRunInstance[]) => {
     const labelCounts = buildLabelCounts(instances);
@@ -705,6 +733,48 @@ export function WorkspaceHome({
           }}
         />
       </div>
+
+      {showGlobalAgentsInWorkspace && (
+        <div className="workspace-home-agent">
+          {globalAgentsTruncated && (
+            <div className="workspace-home-agent-warning">
+              Showing the first part of a large file.
+            </div>
+          )}
+          <FileEditorCard
+            title="Global AGENTS.md"
+            meta={globalAgentsMeta}
+            error={globalAgentsError}
+            value={globalAgentsContent}
+            placeholder="Global instructions are stored in ~/.codex/AGENTS.md"
+            disabled
+            refreshDisabled={globalAgentsRefreshDisabled}
+            saveDisabled
+            saveLabel="Save"
+            onChange={() => {}}
+            onRefresh={onGlobalAgentsRefresh}
+            onSave={() => {}}
+            readOnly
+            showSave={false}
+            helpText={
+              <>
+                Stored at <code>~/.codex/AGENTS.md</code>.
+              </>
+            }
+            classNames={{
+              container: "workspace-home-agent-card",
+              header: "workspace-home-section-header",
+              title: "workspace-home-section-title",
+              actions: "workspace-home-section-actions",
+              meta: "workspace-home-section-meta",
+              iconButton: "ghost workspace-home-icon-button",
+              error: "workspace-home-error",
+              textarea: "workspace-home-agent-textarea",
+              help: "workspace-home-section-meta",
+            }}
+          />
+        </div>
+      )}
 
       <div className="workspace-home-runs">
         <div className="workspace-home-section-header">

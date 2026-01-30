@@ -52,6 +52,7 @@ const baseSettings: AppSettings = {
     "\"SF Mono\", \"SFMono-Regular\", Menlo, Monaco, monospace",
   codeFontSize: 11,
   notificationSoundsEnabled: true,
+  showGlobalAgentsInWorkspace: true,
   experimentalCollabEnabled: false,
   experimentalCollaborationModesEnabled: false,
   experimentalSteerEnabled: false,
@@ -371,6 +372,62 @@ describe("SettingsView Codex overrides", () => {
       expect(onUpdateWorkspaceSettings).toHaveBeenCalledWith("w1", {
         codexArgs: "--profile dev",
       });
+    });
+  });
+
+  it("toggles showing global AGENTS.md in workspaces", async () => {
+    const onUpdateAppSettings = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <SettingsView
+        workspaceGroups={[]}
+        groupedWorkspaces={[]}
+        ungroupedLabel="Ungrouped"
+        onClose={vi.fn()}
+        onMoveWorkspace={vi.fn()}
+        onDeleteWorkspace={vi.fn()}
+        onCreateWorkspaceGroup={vi.fn().mockResolvedValue(null)}
+        onRenameWorkspaceGroup={vi.fn().mockResolvedValue(null)}
+        onMoveWorkspaceGroup={vi.fn().mockResolvedValue(null)}
+        onDeleteWorkspaceGroup={vi.fn().mockResolvedValue(null)}
+        onAssignWorkspaceGroup={vi.fn().mockResolvedValue(null)}
+        reduceTransparency={false}
+        onToggleTransparency={vi.fn()}
+        appSettings={baseSettings}
+        openAppIconById={{}}
+        onUpdateAppSettings={onUpdateAppSettings}
+        onRunDoctor={vi.fn().mockResolvedValue(createDoctorResult())}
+        onUpdateWorkspaceCodexBin={vi.fn().mockResolvedValue(undefined)}
+        onUpdateWorkspaceSettings={vi.fn().mockResolvedValue(undefined)}
+        scaleShortcutTitle="Scale shortcut"
+        scaleShortcutText="Use Command +/-"
+        onTestNotificationSound={vi.fn()}
+        dictationModelStatus={null}
+        onDownloadDictationModel={vi.fn()}
+        onCancelDictationDownload={vi.fn()}
+        onRemoveDictationModel={vi.fn()}
+        initialSection="codex"
+      />,
+    );
+
+    const rows = screen
+      .getAllByText("Show global AGENTS.md in workspaces")
+      .map((label) => label.closest(".settings-toggle-row"))
+      .filter((row): row is HTMLElement => Boolean(row));
+    const toggles = rows
+      .map((row) => row.querySelector("button.settings-toggle"))
+      .filter((button): button is HTMLButtonElement => Boolean(button));
+    if (toggles.length === 0) {
+      throw new Error("Expected global AGENTS.md toggle row");
+    }
+    toggles.forEach((toggle) => {
+      fireEvent.click(toggle);
+    });
+
+    await waitFor(() => {
+      expect(onUpdateAppSettings).toHaveBeenCalledWith(
+        expect.objectContaining({ showGlobalAgentsInWorkspace: false }),
+      );
     });
   });
 });

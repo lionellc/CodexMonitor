@@ -96,6 +96,7 @@ import { useGitCommitController } from "./features/app/hooks/useGitCommitControl
 import { WorkspaceHome } from "./features/workspaces/components/WorkspaceHome";
 import { useWorkspaceHome } from "./features/workspaces/hooks/useWorkspaceHome";
 import { useWorkspaceAgentMd } from "./features/workspaces/hooks/useWorkspaceAgentMd";
+import { useGlobalAgentsMd } from "./features/settings/hooks/useGlobalAgentsMd";
 import { pickWorkspacePath } from "./services/tauri";
 import type {
   AccessMode,
@@ -1107,6 +1108,14 @@ function MainApp() {
     activeWorkspace,
     onDebug: addDebugEntry,
   });
+  const {
+    content: globalAgentsContent,
+    exists: globalAgentsExists,
+    truncated: globalAgentsTruncated,
+    isLoading: globalAgentsLoading,
+    error: globalAgentsError,
+    refresh: refreshGlobalAgents,
+  } = useGlobalAgentsMd();
 
   const {
     commitMessage,
@@ -1994,6 +2003,15 @@ function MainApp() {
       }}
       onAgentMdSave={() => {
         void saveAgentMd();
+      }}
+      showGlobalAgentsInWorkspace={appSettings.showGlobalAgentsInWorkspace}
+      globalAgentsContent={globalAgentsContent}
+      globalAgentsExists={globalAgentsExists}
+      globalAgentsTruncated={globalAgentsTruncated}
+      globalAgentsLoading={globalAgentsLoading}
+      globalAgentsError={globalAgentsError}
+      onGlobalAgentsRefresh={() => {
+        void refreshGlobalAgents();
       }}
     />
   ) : null;
