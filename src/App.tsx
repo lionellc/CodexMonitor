@@ -256,13 +256,21 @@ function MainApp() {
   const composerInputRef = useRef<HTMLTextAreaElement | null>(null);
   const workspaceHomeTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const getWorkspaceName = useCallback(
+    (workspaceId: string) => workspacesById.get(workspaceId)?.name,
+    [workspacesById],
+  );
+
   const {
     updaterState,
     startUpdate,
     dismissUpdate,
     handleTestNotificationSound,
+    handleTestSystemNotification,
   } = useUpdaterController({
     notificationSoundsEnabled: appSettings.notificationSoundsEnabled,
+    systemNotificationsEnabled: appSettings.systemNotificationsEnabled,
+    getWorkspaceName,
     onDebug: addDebugEntry,
     successSoundUrl,
     errorSoundUrl,
@@ -2166,6 +2174,7 @@ function MainApp() {
           scaleShortcutTitle,
           scaleShortcutText,
           onTestNotificationSound: handleTestNotificationSound,
+          onTestSystemNotification: handleTestSystemNotification,
           dictationModelStatus: dictationModel.status,
           onDownloadDictationModel: dictationModel.download,
           onCancelDictationDownload: dictationModel.cancel,
